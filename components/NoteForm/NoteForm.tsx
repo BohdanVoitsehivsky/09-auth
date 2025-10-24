@@ -4,7 +4,7 @@ import { useState, useTransition, useCallback } from 'react';
 import type { ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote } from '@/lib/api';
+import { createNote } from '@/lib/api/clientApi';
 import type { CreateNoteRequest, NoteTag } from '@/types/note';
 import { NOTE_TAGS } from '@/types/note';
 import { initialDraft, useNoteStore } from '@/lib/store/noteStore';
