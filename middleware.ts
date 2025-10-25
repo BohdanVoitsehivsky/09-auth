@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -8,9 +9,22 @@ const isAuthPage = (pathname: string) => AUTH_PAGES.includes(pathname);
 const isProtectedPath = (pathname: string) =>
   PROTECTED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get('accessToken')?.value;
+export async function middleware(request: NextRequest) {
+  const { pathname, origin } = request.nextUrl;
+  let accessToken = request.cookies.get('accessToken')?.value;
+  const refreshToken = request.cookies.get('refreshToken')?.value;
+
+  if(!accessToken && refreshToken) {
+    await fetch(`${origin}/api/auth/session`, {
+      method: 'GET',
+      headers: {
+        Cookie: request.headers.get('Cookie')?? '',
+      },
+      });
+      
+      accessToken = request.cookies.get('accessToken')?.value;
+    }
+  
 
   if (accessToken && isAuthPage(pathname)) {
     const destination = request.nextUrl.clone();
